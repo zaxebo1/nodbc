@@ -126,9 +126,9 @@ static value nodbc_connect( value url, value user, value password )
 	try
 	{
 		if ( user == val_null || password == val_null )
-			con = DriverManager::getConnection( ODBCXX_STRING_CONST( val_string( url ) ) );
+			con = DriverManager::getConnection( ODBCXX_STRING( val_string( url ) ) );
 		else
-			con = DriverManager::getConnection( ODBCXX_STRING_CONST( val_string( url ) ), ODBCXX_STRING_CONST( val_string( user ) ), ODBCXX_STRING_CONST( val_string( password ) ) );
+			con = DriverManager::getConnection( ODBCXX_STRING( val_string( url ) ), ODBCXX_STRING( val_string( user ) ), ODBCXX_STRING( val_string( password ) ) );
 	} catch(SQLException& e) {
 		buffer b = alloc_buffer( "Connection to database failed: " );
 		buffer_append( b, e.getMessage().c_str() );
@@ -338,9 +338,9 @@ static value nodbc_request( value c, value r )
 
 		stmt->setFetchSize(10);
 
-		printf( ODBCXX_STRING_CONST( ODBCCONN( c )->nativeSQL( val_string( r ) ) ).c_str() );
+		printf( ODBCXX_STRING( ODBCCONN( c )->nativeSQL( val_string( r ) ) ).c_str() );
 
-		if( stmt->execute( ODBCXX_STRING_CONST( ODBCCONN( c )->nativeSQL( val_string( r ) ) ) ) )
+		if( stmt->execute( ODBCXX_STRING( ODBCCONN( c )->nativeSQL( val_string( r ) ) ) ) )
 		{
 			rs = stmt->getResultSet();
 
@@ -406,20 +406,34 @@ static value nodbc_result_get_column_number( value m, value c )
 	return val_null;
 }
 
+void* p_nodbc_connect = (void*)nodbc_connect;
+void* p_nodbc_free_connection = (void*)nodbc_free_connection;
+void* p_nodbc_request = (void*)nodbc_request;
 
-DEFINE_PRIM(nodbc_connect,3);
-DEFINE_PRIM(nodbc_free_connection,1);
+void* p_nodbc_result_get_column_name = (void*)nodbc_result_get_column_name;
+void* p_nodbc_result_get_column_number = (void*)nodbc_result_get_column_number;
+void* p_nodbc_result_get_length = (void*)nodbc_result_get_length;
+void* p_nodbc_result_get_nfields = (void*)nodbc_result_get_nfields;
+void* p_nodbc_result_next = (void*)nodbc_result_next;
+void* p_nodbc_result_get = (void*)nodbc_result_get;
+void* p_nodbc_result_get_int = (void*)nodbc_result_get_int;
+void* p_nodbc_result_get_float = (void*)nodbc_result_get_float;
+void* p_nodbc_result_set_conv_date = (void*)nodbc_result_set_conv_date;
+
+DEFINE_PRIM(p_nodbc_connect,3);
+DEFINE_PRIM(p_nodbc_free_connection,1);
+DEFINE_PRIM(p_nodbc_request,2);
+
+DEFINE_PRIM(p_nodbc_result_get_column_name,2);
+DEFINE_PRIM(p_nodbc_result_get_column_number,2);
+DEFINE_PRIM(p_nodbc_result_get_length,1);
+DEFINE_PRIM(p_nodbc_result_get_nfields,1);
+DEFINE_PRIM(p_nodbc_result_next,1);
+DEFINE_PRIM(p_nodbc_result_get,2);
+DEFINE_PRIM(p_nodbc_result_get_int,2);
+DEFINE_PRIM(p_nodbc_result_get_float,2);
+DEFINE_PRIM(p_nodbc_result_set_conv_date,2);
+
 //DEFINE_PRIM(nodbc_free_result,1);
 //DEFINE_PRIM(nodbc_last_insert_id,1);
-DEFINE_PRIM(nodbc_request,2);
-
 //DEFINE_PRIM(nodbc_reset_connection,1);
-DEFINE_PRIM(nodbc_result_get_column_name,2);
-DEFINE_PRIM(nodbc_result_get_column_number,2);
-DEFINE_PRIM(nodbc_result_get_length,1);
-DEFINE_PRIM(nodbc_result_get_nfields,1);
-DEFINE_PRIM(nodbc_result_next,1);
-DEFINE_PRIM(nodbc_result_get,2);
-DEFINE_PRIM(nodbc_result_get_int,2);
-DEFINE_PRIM(nodbc_result_get_float,2);
-DEFINE_PRIM(nodbc_result_set_conv_date,2);
