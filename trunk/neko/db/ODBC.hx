@@ -23,9 +23,9 @@
  * DAMAGE.
  * 
  * Written by Lee McColl Sylvester
- *
+ * With a couple of small additions by Danny Wilson
  */
-//package neko.db;
+package neko.db;
  import neko.db.ResultSet;
  import neko.db.Connection;
 
@@ -121,14 +121,18 @@ private class ODBCConnection implements Connection {
 	{
 		dbname = s;
 		var r = this.request;
+		var query = function(q:String) {
+			return function(){ return r(q).getIntResult(0); };
+		}
+		
 		lastInsertId = switch( s.toLowerCase() )
 		{
 			case "mssql","sybase": 
-				function() { return r("SELECT @@IDENTITY").getIntResult(0); }
+				query("SELECT @@IDENTITY");
 			case "mysql":
-				function() { return r("SELECT LAST_INSERT_ID()").getIntResult(0); }
+				query("SELECT LAST_INSERT_ID()");
 			case "postgresql":
-				function() { return r("SELECT currval()").getIntResult(0); }
+				query("SELECT currval()");
 			default:
 				function() { return 0; }
 		}
