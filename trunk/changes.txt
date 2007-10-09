@@ -1,0 +1,7 @@
+08/10/2007
+===========
+
+This is currently an alpha. The Linux and Mac builds will come 
+shortly, however, this build has currently only been tested with
+Microsoft Access, and therefore requires extensive further 
+testing.
